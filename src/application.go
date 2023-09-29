@@ -121,7 +121,7 @@ func Serialize(object jsonStruct) []byte {
 func Signup(host string, port string, path string) string {
 	client := &http.Client{}
 	url := fmt.Sprintf("http://%s:%s%s", host, port, path)
-	log.Info("URL: ", url)
+	log.Info("URL Signup: ", url)
 	body := jsonStruct{User: "janedove"}
 	resp, err := client.Post(url, "application/json", bytes.NewBuffer(Serialize(body)))
 	if err != nil {
@@ -132,15 +132,33 @@ func Signup(host string, port string, path string) string {
 	if e != nil {
 		log.Fatal(e.Error())
 	}
-	fmt.Println(string(b))
+	//fmt.Println(string(b))
 	return string(b)
 }
 
-func parseRespo(body string) *jsonStruct {
+func ParseRespo(body string) *jsonStruct {
 	js := new(jsonStruct)
 	err := json.Unmarshal([]byte(body), &js)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	return js
+}
+
+func Check(host string, port string, path string) string {
+	client := &http.Client{}
+	url := fmt.Sprintf("http://%s:%s%s", host, port, path)
+	log.Info("URL Check: ", url)
+	body := jsonStruct{User: "janedove"}
+	resp, err := client.Post(url, "application/json", bytes.NewBuffer(Serialize(body)))
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	defer resp.Body.Close()
+	b, e := io.ReadAll(resp.Body)
+	if e != nil {
+		log.Fatal(e.Error())
+	}
+	//fmt.Println(string(b))
+	return string(b)
 }

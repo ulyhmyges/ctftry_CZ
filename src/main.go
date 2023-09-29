@@ -29,7 +29,8 @@ func main() {
 	// Etape 1 : pong
 	rightPort := <-channel
 	fmt.Println("main - len: ", Ping(host, rightPort, path))
-	path = "/signup"
-	fmt.Println("Signup: ", Signup(host, rightPort, path))
+
+	fmt.Println("Signup: ", Signup(host, rightPort, "/signup"))
+	fmt.Println("Check: ", Check(host, rightPort, "/check"))
 
 }
