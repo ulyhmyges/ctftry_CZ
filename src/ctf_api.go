@@ -39,7 +39,6 @@ func rangePort() []string {
 }
 
 var channel chan string
-var client http.Client
 
 // stock le port dans le channel
 func Connexion(client *http.Client, host string, port string, path string, wg *sync.WaitGroup) {
@@ -47,13 +46,14 @@ func Connexion(client *http.Client, host string, port string, path string, wg *s
 	if err == nil {
 		channel = make(chan string)
 		wg.Done()
+		log.Warn("port ouvert: ", port)
 		channel <- port
 	}
 }
 
 func Get(client *http.Client, host string, port string, path string) (*http.Response, error) {
 	url := fmt.Sprintf("http://%s:%s%s", host, port, path)
-	log.Info("HTTP GET: ", url)
+	// log.Info("HTTP GET: ", url)
 	return client.Get(url)
 }
 

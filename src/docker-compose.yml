@@ -1,0 +1,8 @@
+services:
+    ctf_api:
+        container_name: ctf_api
+        build:
+            context: .
+            dockerfile: Dockerfile
+
+        
