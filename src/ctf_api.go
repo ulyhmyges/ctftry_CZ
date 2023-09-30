@@ -22,9 +22,9 @@ func OutputLog() {
 	log.SetOutput(iw)
 }
 
-func Request(ip string, ports []string, path string, wg *sync.WaitGroup) {
+func Request(client *http.Client, ip string, ports []string, path string, wg *sync.WaitGroup) {
 	for _, port := range ports {
-		go Connexion(ip, port, path, wg)
+		go Connexion(client, ip, port, path, wg)
 	}
 }
 

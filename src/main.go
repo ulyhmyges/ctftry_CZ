@@ -16,7 +16,7 @@ func main() {
 
 	var wg sync.WaitGroup
 	wg.Add(1)
-	Request(host, ports, "/ping", &wg)
+	Request(client, host, ports, "/ping", &wg)
 	wg.Wait()
 
 	// Channel : finding the port
