@@ -24,22 +24,22 @@ func main() {
 		wg.Done()
 		log.Error("Aucun port ouvert, connexion non établie.")
 
-	} else {
-		wg.Wait()
-
-		// Channel : finding the port
-		rightPort := <-channel
-		// Etape 1 : pong
-		fmt.Println("main - len: ", Ping(client, host, rightPort, "/ping"))
-
-		// Etape 2 : signup
-		fmt.Println("Signup: ", Signup(client, host, rightPort, "/signup"))
-
-		// Etape 3 : check
-		fmt.Println("Check: ", Check(client, host, rightPort, "/check"))
-
-		// Etape 4 : getUserSecret
-		fmt.Println("Check: ", GetUserSecret(client, host, rightPort, "/getUserSecret"))
 	}
+
+	wg.Wait()
+
+	// Channel : finding the port
+	rightPort := <-channel
+	// Etape 1 : pong
+	fmt.Println("main - len: ", Ping(client, host, rightPort, "/ping"))
+
+	// Etape 2 : signup
+	fmt.Println("Signup: ", Signup(client, host, rightPort, "/signup"))
+
+	// Etape 3 : check
+	fmt.Println("Check: ", Check(client, host, rightPort, "/check"))
+
+	// Etape 4 : getUserSecret
+	fmt.Println("Check: ", GetUserSecret(client, host, rightPort, "/getUserSecret"))
 
 }
