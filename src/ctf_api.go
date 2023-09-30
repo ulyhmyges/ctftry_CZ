@@ -51,15 +51,6 @@ func Request(ip string, ports []string, path string, wg *sync.WaitGroup) {
 		go testconnexion(ip, port, path, wg)
 	}
 	fmt.Println("before channel")
-	/*
-		p := <-channel
-		if p.Boolean {
-			fmt.Println("right: ", p.Url)
-			body, _ := io.ReadAll(p.Response.Body)
-			fmt.Println("body: ", fmt.Sprint(string(body)))
-			log.Info("right", p.Url)
-		}
-	*/
 }
 
 func rangePort() []string {
@@ -82,6 +73,7 @@ func testconnexion(host string, port string, path string, wg *sync.WaitGroup) {
 	_, err := client.Get(url)
 
 	if err == nil {
+		fmt.Println("port: ", port)
 		channel = make(chan string)
 		wg.Done()
 		fmt.Println("url: ", url)
@@ -105,24 +97,11 @@ func Ping(host string, port string, path string) string {
 	return string(body)
 }
 
-type jsonStruct struct {
-	User   string `json:"user"`
-	Secret string `json:"secret"`
-}
-
-func Serialize(object jsonStruct) []byte {
-	b, err := json.Marshal(object)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	return b
-}
-
 func Signup(host string, port string, path string) string {
 	client := &http.Client{}
 	url := fmt.Sprintf("http://%s:%s%s", host, port, path)
 	log.Info("URL Signup: ", url)
-	body := jsonStruct{User: "janedove"}
+	body := JsonStruct{User: "janedove"}
 	resp, err := client.Post(url, "application/json", bytes.NewBuffer(Serialize(body)))
 	if err != nil {
 		log.Fatal(err.Error())
@@ -136,8 +115,8 @@ func Signup(host string, port string, path string) string {
 	return string(b)
 }
 
-func ParseRespo(body string) *jsonStruct {
-	js := new(jsonStruct)
+func parseRespo(body string) *JsonStruct {
+	js := new(JsonStruct)
 	err := json.Unmarshal([]byte(body), &js)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -145,11 +124,24 @@ func ParseRespo(body string) *jsonStruct {
 	return js
 }
 
+type JsonStruct struct {
+	User   string `json:"User"`
+	Secret string `json:"secret"`
+}
+
+func Serialize(object JsonStruct) []byte {
+	b, err := json.Marshal(object)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return b
+}
+
 func Check(host string, port string, path string) string {
 	client := &http.Client{}
 	url := fmt.Sprintf("http://%s:%s%s", host, port, path)
 	log.Info("URL Check: ", url)
-	body := jsonStruct{User: "janedove"}
+	body := JsonStruct{User: "janedove"}
 	resp, err := client.Post(url, "application/json", bytes.NewBuffer(Serialize(body)))
 	if err != nil {
 		log.Fatal(err.Error())
@@ -161,4 +153,31 @@ func Check(host string, port string, path string) string {
 	}
 	//fmt.Println(string(b))
 	return string(b)
+}
+
+func GetUserSecret(host string, port string, path string) *JsonStruct {
+	client := &http.Client{}
+	url := fmt.Sprintf("http://%s:%s%s", host, port, path)
+	log.Info("URL Check: ", url)
+	body := JsonStruct{User: "janedove"}
+	var str string
+	for {
+		resp, err := client.Post(url, "application/json", bytes.NewBuffer(Serialize(body)))
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		defer resp.Body.Close()
+		b, e := io.ReadAll(resp.Body)
+		if e != nil {
+			log.Fatal(e.Error())
+		}
+		str = string(b)
+		fmt.Println(str)
+		if str[0] != 'R' {
+			break
+		}
+	}
+	log.Info("URL getUserSecret: ", url)
+	js := JsonStruct{User: body.User, Secret: str[12:]}
+	return &js
 }

@@ -8,29 +8,28 @@ import (
 func main() {
 	OutputLog()
 
-	//app := AppFiber()
-	//var wc sync.WaitGroup
-	//wc.Add(1)
-	//go app.Listen(":3001")
-	// starting server
-	//log.Info("\nStarting server\nListen to the port 3001...")
-
+	// CTF API
 	host := "10.49.122.144"
 	ports := rangePort()
-	//p := []string{"3001", "49789"}
-	path := "/ping"
-	//raw_connect(host, ports, path)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
-	Request(host, ports, path, &wg)
-	wg.Wait()
+	Request(host, ports, "/ping", &wg)
+	fmt.Println("wait")
+	//wg.Wait()
+
+	rightPort := <-channel
 
 	// Etape 1 : pong
-	rightPort := <-channel
-	fmt.Println("main - len: ", Ping(host, rightPort, path))
+	fmt.Println("main - len: ", Ping(host, rightPort, "/ping"))
 
+	// Etape 2 : signup
 	fmt.Println("Signup: ", Signup(host, rightPort, "/signup"))
+
+	// Etape 3 : check
 	fmt.Println("Check: ", Check(host, rightPort, "/check"))
+
+	// Etape 4 : getUserSecret
+	fmt.Println("Check: ", GetUserSecret(host, rightPort, "/getUserSecret"))
 
 }
